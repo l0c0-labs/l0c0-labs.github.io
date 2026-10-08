@@ -1,0 +1,14 @@
+baseURL = "https://l0c0-labs.github.io/"
+languageCode = "en-us"
+title = "L0C0 | Laboratory of Cyber Operations"
+
+[[module.imports]]
+path = "github.com/gohugo-ananke/ananke/v2"
+
+[params]
+description = "Independent Cybersecurity Research"
+
+[[menus.main]]
+name = "Research"
+pageRef = "/posts"
+weight = 10
