@@ -1,14 +1,18 @@
 baseURL = "https://l0c0-labs.github.io/"
 languageCode = "en-us"
-title = "L0C0 | Laboratory of Cyber Operations"
+title = "L0c0 | Laboratory of Cyber Operations"
 
 [[module.imports]]
-path = "github.com/gohugo-ananke/ananke/v2"
+path = "github.com/nunocoracao/blowfish/v3"
 
 [params]
-description = "Independent Cybersecurity Research"
+  description = "Independent Cybersecurity Research"
+  defaultAppearance = "dark"
+  autoSwitchAppearance = false
 
-[[menus.main]]
-name = "Research"
-pageRef = "/posts"
-weight = 10
+[params.homepage]
+  layout = "background"
+  showRecent = true
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
