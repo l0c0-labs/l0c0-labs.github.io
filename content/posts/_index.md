@@ -1,3 +1,3 @@
 +++
-title = "전체 글"
+title = "All posts"
 +++

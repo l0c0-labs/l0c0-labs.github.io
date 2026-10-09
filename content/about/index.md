@@ -1,21 +1,21 @@
 +++
-title = "L0C0 소개"
+title = "About L0C0"
 description = "Independent Cybersecurity Research"
 +++
 
 ## Independent cybersecurity research
 
-**L0C0**는 기술을 직접 분석하고 실험하는 독립적인 사이버보안 연구 그룹입니다.
+**L0C0** is an independent cybersecurity research group exploring technology through hands-on investigation.
 
-시스템이 어떻게 동작하는지, 어떤 조건에서 보안 문제가 발생하는지 탐구합니다. 이곳에는 분석 과정과 발견한 내용, 직접 개발한 도구를 기록합니다.
+We study how systems work, what causes security weaknesses, and what their behavior can reveal. This site documents our research process, findings, and tools.
 
-## 연구 분야
+## Research areas
 
-- **취약점 분석** — 보안 결함의 원인과 영향을 조사합니다.
-- **리버스 엔지니어링** — 소프트웨어와 펌웨어의 내부 동작을 분석합니다.
-- **악성코드 분석** — 악성 코드의 구조, 동작과 흔적을 살펴봅니다.
-- **도구 개발** — 분석과 실험에 활용할 수 있는 보안 도구를 만듭니다.
+- **Vulnerability Research** — Investigating the causes and impact of security flaws.
+- **Reverse Engineering** — Understanding the internal workings of software and firmware.
+- **Malware Analysis** — Examining malicious code, its behavior, and the traces it leaves behind.
+- **Tool Development** — Building practical tools for analysis and experimentation.
 
 ## GitHub
 
-코드와 프로젝트는 [L0C0 GitHub](https://github.com/l0c0-labs)에서 확인할 수 있습니다.
+Find our code and projects on [L0C0 GitHub](https://github.com/l0c0-labs).
