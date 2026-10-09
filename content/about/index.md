@@ -9,6 +9,11 @@ Our work includes vulnerability research, hardware and firmware analysis, attack
 
 We combine collaborative research with hands-on experimentation to deepen our understanding of security and share our findings and tools with the community.
 
+## Researchers
+
+- Inwoo Na (나인우)
+- 장종일
+
 ## Code & tools
 
 Explore our projects on [GitHub](https://github.com/l0c0-labs).
