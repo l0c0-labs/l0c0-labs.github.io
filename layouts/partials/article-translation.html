@@ -1,0 +1,18 @@
+{{ $source := "en" }}
+{{ if findRE "[가-힣]" .Plain }}{{ $source = "ko" }}{{ end }}
+{{ with .Params.language }}{{ if in (slice "en" "ko") . }}{{ $source = . }}{{ end }}{{ end }}
+<div class="article-translation notranslate" translate="no">
+  <span>Read in</span><div class="gtranslate_wrapper"></div>
+  <small>Automatic translation · original: {{ if eq $source "ko" }}한국어{{ else }}English{{ end }}</small>
+  <noscript>Enable JavaScript to translate this article.</noscript>
+</div>
+<script>
+window.gtranslateSettings = {default_language: {{ $source }}, languages: ["en", "ko"], native_language_names: true, wrapper_selector: ".gtranslate_wrapper", select_language_label: "Choose reading language", browser_lang: false};
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.sidebar, .page-footer, .back-link, .post-meta, .eyebrow, pre, code, kbd, samp').forEach(function (element) {
+    element.classList.add('notranslate');
+    element.setAttribute('translate', 'no');
+  });
+});
+</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/dropdown.js" defer></script>
