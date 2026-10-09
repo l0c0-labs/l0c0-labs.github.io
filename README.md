@@ -24,3 +24,7 @@ draft = false
 Write the article below the front matter. Link images with `![Image description](image.png)`. Published posts automatically appear on the homepage in reverse chronological order; drafts are excluded by Hugo's normal production build.
 
 Pushing to `main` triggers the existing GitHub Pages deployment workflow.
+
+## Visual editor
+
+Open https://l0c0.org/admin/ and use Pages CMS. Sign in with GitHub and grant its app access only to this repository. The repository-root `.pages.yml` configures Research posts, image uploads, and the About page. New posts start as drafts. Disable Draft and save to publish using the existing Pages workflow. Uploaded images live in `static/uploads/` and render at `/uploads/`.

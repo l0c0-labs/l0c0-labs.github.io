@@ -1,0 +1,96 @@
+media:
+  - name: post_images
+    label: Post images
+    input: static/uploads
+    output: /uploads
+    extensions: [jpg, jpeg, png, webp, gif]
+    rename: safe
+content:
+  - name: posts
+    label: Research posts
+    type: collection
+    path: content/posts
+    format: yaml-frontmatter
+    exclude: [_index.md]
+    filename:
+      template: "{year}-{month}-{day}-{primary}.md"
+      field: create
+    view:
+      fields: [title, date, draft]
+      primary: title
+      sort: [date, title]
+      search: [title, description]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Publication date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: description
+        label: Summary
+        type: text
+      - name: categories
+        label: Topics
+        type: select
+        options:
+          multiple: true
+          values:
+            - name: research
+              label: Research Notes
+            - name: vulnerability
+              label: Vulnerability Research
+            - name: hardware-firmware
+              label: Hardware & Firmware
+            - name: attack-trends
+              label: Attack Trends
+            - name: reviews
+              label: Papers & CVE Reviews
+            - name: tools
+              label: Security Tools
+      - name: tags
+        label: Additional tags
+        type: string
+        list: true
+      - name: image
+        label: Cover image
+        type: image
+        options:
+          media: post_images
+      - name: draft
+        label: Draft — keep this post unpublished
+        type: boolean
+        default: true
+      - name: body
+        label: Article
+        type: rich-text
+        options:
+          format: markdown
+          media: post_images
+          switcher: true
+  - name: about
+    label: About L0C0
+    type: file
+    path: content/about/index.md
+    format: toml-frontmatter
+    fields:
+      - name: title
+        label: Page title
+        type: string
+        required: true
+      - name: description
+        label: Description
+        type: text
+      - name: body
+        label: Page content
+        type: rich-text
+        options:
+          format: markdown
+          media: post_images
