@@ -43,6 +43,7 @@ content:
         options:
           multiple: true
           values:
+            - {name: incident-analysis, label: Incident Analysis}
             - name: research
               label: Research Notes
             - name: vulnerability
