@@ -4,7 +4,9 @@ Hugo + Blowfish, hosted on GitHub Pages at https://l0c0.org.
 
 ## Homepage
 
-The custom homepage is in `layouts/index.html`; its styles are in `static/css/l0c0.css`. Blowfish still renders article pages. All homepage assets are local; no JavaScript or external fonts are required.
+Custom blog layouts live in `layouts/`, with local CSS, search/filter JavaScript, and the OFL-licensed Roboto Mono font in `static/`. Roboto Mono distinguishes zero from O with a slashed zero. Article pages include a table of contents, code blocks, and responsive images.
+
+Supported category values: `vulnerability`, `reverse-engineering`, `malware`, `tools`. Add `categories = ["vulnerability"]` to an article front matter. Optional thumbnail: add `feature.png`, `cover.png`, or `thumbnail.png` to the article folder.
 
 ## Publish an article
 
