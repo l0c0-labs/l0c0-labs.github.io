@@ -6,7 +6,7 @@ title = "L0C0 | Cybersecurity Research"
 path = "github.com/nunocoracao/blowfish/v3"
 
 [params]
-  description = "Independent Cybersecurity Research"
+  description = "Independent cybersecurity research across software, hardware, and systems."
   defaultAppearance = "dark"
   autoSwitchAppearance = false
 

@@ -6,7 +6,7 @@ Hugo + Blowfish, hosted on GitHub Pages at https://l0c0.org.
 
 Custom blog layouts live in `layouts/`, with local CSS, search/filter JavaScript, and the OFL-licensed Roboto Mono font in `static/`. Roboto Mono distinguishes zero from O with a slashed zero. Article pages include a table of contents, code blocks, and responsive images.
 
-Supported category values: `vulnerability`, `reverse-engineering`, `malware`, `tools`. Add `categories = ["vulnerability"]` to an article front matter. Optional thumbnail: add `feature.png`, `cover.png`, or `thumbnail.png` to the article folder.
+Suggested topic values: `research`, `vulnerability`, `hardware-firmware`, `attack-trends`, `reviews`, `tools`. These are browsing topics, not limits on research scope. Add `categories = ["vulnerability"]` to an article front matter. Optional thumbnail: add `feature.png`, `cover.png`, or `thumbnail.png` to the article folder.
 
 ## Publish an article
 

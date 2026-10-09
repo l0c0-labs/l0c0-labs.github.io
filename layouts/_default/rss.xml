@@ -1,0 +1,7 @@
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\"?>" | safeHTML }}
+{{ printf "<?xml-stylesheet type=\"text/xsl\" href=\"%s\"?>" ("feed.xsl" | absURL) | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
+<title>L0C0 Research</title><link>{{ .Site.Home.Permalink }}</link><description>{{ .Site.Params.description }}</description><language>en-us</language><atom:link href="{{ with .OutputFormats.Get "RSS" }}{{ .Permalink }}{{ end }}" rel="self" type="application/rss+xml"/>
+{{ range first 50 ((where .Site.RegularPages "Section" "posts").ByDate.Reverse) }}
+<item><title>{{ .Title }}</title><link>{{ .Permalink }}</link><guid isPermaLink="true">{{ .Permalink }}</guid>{{ if not .Date.IsZero }}<pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</pubDate>{{ end }}<description>{{ .Description | default (.Summary | plainify) }}</description>{{ range .Params.categories }}<category>{{ . }}</category>{{ end }}</item>
+{{ end }}</channel></rss>
