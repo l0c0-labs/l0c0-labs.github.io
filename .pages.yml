@@ -53,6 +53,8 @@ content:
             - {name: web-security, label: Web Security}
             - {name: network-security, label: Network Security}
             - {name: incident-analysis, label: Incident Analysis}
+            - {name: system-security, label: System Security}
+            - {name: digital-forensics, label: Digital Forensics}
             - name: research
               label: Research Notes
             - name: vulnerability

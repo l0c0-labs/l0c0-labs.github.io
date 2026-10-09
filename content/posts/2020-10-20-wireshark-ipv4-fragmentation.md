@@ -1,177 +1,149 @@
 ---
-title: "Wireshark를 이용한 IPv4 단편화 패킷 분석"
+title: "와이어샤크를 이용한 단편화 패킷 분석"
 date: 2020-10-20
-description: "MTU 1500 환경에서 ping으로 IPv4 단편화를 발생시키고, Wireshark에서 식별자·플래그·오프셋과 재조립 결과를 확인한다."
 categories: [network-security]
-tags: [wireshark, ipv4, fragmentation, packet-analysis, icmp]
 language: ko
 author: "Inwoo Na"
 draft: false
 ---
 
-Wireshark를 이용하여 IPv4 단편화 패킷을 분석하려고 한다. 먼저 IPv4 헤더의 주요 필드를 정리한 뒤, ping을 이용해 단편화를 발생시키고 캡처한 패킷을 확인한다.
+와이어샤크를 이용하여 단편화 패킷을 분석하려고 한다. 단편화 패킷에서 사용되는 IP헤더의 데이터 그램에 대한 세부설명은 아래와 같다.
 
-## 1. IPv4 헤더와 단편화 관련 필드
+## 1. 단편화에서 사용되는 프로토콜(IP헤더 데이터 그램) 정리
 
-![IPv4 헤더의 필드 구성](/uploads/ipv4-fragmentation/ipv4-header.jpeg)
+![IP데이터 그램의 사진](/uploads/ipv4-fragmentation/ipv4-header.jpeg)
 
-### 버전(Version)
+[IP데이터 그램의 사진]
 
-IP의 버전을 나타내는 4비트 필드이다. IPv4의 값은 `0100`, IPv6의 값은 `0110`이다. 버전에 따라 헤더 구성이 달라지므로 올바른 해석을 위해 버전 정보가 필요하다. 아래 설명은 IPv4 헤더를 기준으로 한다.
+### 1) 버전(Version)
 
-### 헤더 길이(Header Length)
+IP의 버전을 의미하며 4비트의 크기를 가지고 있다. IPv4 = 0100, IPv6 = 0110
 
-IPv4의 IHL 필드는 헤더 길이를 4바이트 단위로 표현한다. 최소 헤더 길이는 20바이트이며, 최댓값은 `(2^4 - 1) × 4 = 60바이트`이다. 옵션이 없는 경우 IHL은 5이며, 헤더 길이는 20바이트이다.
+버전에 따라 헤더의 구성이 달라지므로, 올바른 해석을 위해 IP버전정보가 필요하다. 버전이 맞지 않는 경우에는 폐기한다.
 
-### 서비스 타입(Type of Service)
+### 2) 헤더길이(Header Length)
 
-서비스 품질과 관련된 처리를 위해 사용하는 필드이다. 현재는 DSCP와 ECN으로 나누어 해석한다. QoS(Quality of Service)는 네트워크에서 전송률, 지연, 오류율 등과 관련된 서비스 품질을 의미한다.
+4바이트 단위로 표현하고 최소길이는 20바이트, 최대 표현 가능한 길이는 (2^4 –1) * 4 = 60바이트이다. 실제값은 4바이트 단위로 들어간다.
 
-### 전체 길이(Total Length)
+### 3) 서비스 타입
 
-IPv4 헤더와 데이터 길이를 합한 값이다. 16비트 필드이므로 최댓값은 `2^16 - 1 = 65535바이트`이다.
+QoS(Quality of Service)를 제공할 때 사용함. QoS란 인터넷이나 네트워크상에서 전송률, 에러율과 관련된 서비스의 품질을 의미한다.
 
-```text
-IPv4 데이터 길이 = Total Length - IPv4 헤더 길이
-```
+### 4) 전체길이 (Total Length)
 
-### 식별자(Identification)
+헤더와 데이터의 길이를 합한 길이이며 전체 길이의 최댓값은 2^16 – 1인 65535이다. 데이터의 길이 = 전체길이 – 헤더길이
 
-단편화된 데이터그램을 재조립할 때 사용하는 식별 값이다. 동일한 원본 데이터그램에서 나뉜 단편들은 같은 식별자를 가진다. 재조립 시에는 식별자뿐 아니라 발신지·목적지 주소와 프로토콜도 함께 확인한다.
+헤더 길이는 20~60바이트이며 지정하지 않았을시 20바이트이다.
 
-### 플래그(Flags)
+### 5) 식별자(Identification)
 
-3비트 필드이며 예약 비트와 다음 두 플래그로 구성된다.
+데이터 그램이 단편화되어 전송된 후, 재조립할 때 이용됨.
 
-- **DF(Don't Fragment)**: 1이면 단편화를 허용하지 않는다. 0이면 필요할 때 단편화할 수 있다.
-- **MF(More Fragments)**: 1이면 뒤에 이어지는 단편이 있다. 0이면 마지막 단편이거나 단편화되지 않은 데이터그램이다.
+식별자 필드는 중복되지 않아야하며 재조립 대상에서 구분되어야함.
 
-### 단편 오프셋(Fragment Offset)
+모든 단편화된 단편의 헤더에는 식별자 필드가 포함된다.
 
-원본 IPv4 데이터에서 해당 단편 데이터가 시작하는 위치를 나타낸다. 헤더의 필드 값은 **8바이트 단위**이다.
+### 6) 플래그(Flag)
 
-첫 번째 단편의 오프셋은 0이다. 첫 단편의 데이터 길이가 800바이트라면 다음 단편의 헤더에 저장되는 오프셋 값은 `800 ÷ 8 = 100`이다.
+데이터 그램의 상태나 진위를 나타내기 위한 변수, 두가지가 있으며 종류는
 
-Wireshark는 오프셋을 바이트 위치로 환산하여 표시하므로, 화면의 `1480`은 헤더에 저장된 값 `185`에 해당한다.
+- Do not Fragment (1이면 단편화를 하지 않고, 0이면 단편화를 허용함)
+- More Fragment (1이면 마지막 단편이 아님, 0이면 마지막 단편)
 
-### 수명(Time to Live, TTL)
+### 7) 단편화 오프셋(Fragmentation Offset)
 
-패킷이 네트워크에서 무한히 순환하지 않도록 수명을 제한하는 필드이다. 라우터를 지날 때 감소하며, TTL이 소진되면 패킷을 폐기한다. 초기값은 운영체제와 설정에 따라 달라진다.
+전체 데이터 그램에서 해당 단편 데이터의 시작 위치이다. 8바이트 단위로 표시한다.
 
-### 프로토콜(Protocol)
+예) 첫 번째 단편의 오프셋 값은 0 = 첫 번째 단편이므로 시작 위치가 0임
 
-IPv4 데이터에 실린 상위 프로토콜을 나타낸다. 이 실습에서 사용하는 ICMP의 프로토콜 번호는 1이다.
+예) 두 번째 단편부터는 이전에 단편화된 길이를 8로 나누어 계산 = 만약, 첫 번째가 800바이트였다면 두 번째 단편화 오프셋값은 100이다.
 
-### 헤더 체크섬(Header Checksum)
+### 8) 수명(Time to Live)
 
-IPv4 **헤더**의 오류를 확인하는 데 사용한다. IPv4 데이터 전체를 검사하는 체크섬은 아니다.
+데이터 그램의 수명제한을 위해 사용한다. 홉수로 수명을 표시하며 라우터가 데이터 그램을 처리할 때마다 1홉씩 감소시킨다. 보내는 곳에서 수명 값을 지정하여 보내며 초기값은 운영체제와 설정에 따라 달라진다. 데이터 그램들의 송수신 과정에서 상위계층 프로토콜을 혼란시킬 수 있으므로, 홉수가 0이 되면 라우터에서 데이터 그램을 폐기한다.
 
-### 발신지 주소와 목적지 주소
+### 9) 프로토콜(Protocol)
 
-Source Address는 발신지 IPv4 주소이고, Destination Address는 목적지 IPv4 주소이다.
+데이터 그램을 처리한 후, 전달될 상위 프로토콜을 표시한다. Internet Protocol은 다양한 상위프로토콜을 다중화, 역다중화 하기 때문에 필요하다.
+
+### 10) 체크섬(Checksum)
+
+수신한 IP 헤더 내의 에러 여부 체크용도이다.
+
+### 11) 발신지주소(Source Address)
+
+발신지의 IP주소이다.
+
+### 12) 목적지주소(Destination Address)
+
+목적지의 IP주소이다.
 
 ## 2. ping을 이용한 단편화 과정 확인
 
 ### 1) MTU 확인
 
-Windows 명령 프롬프트에서 다음 명령으로 네트워크 인터페이스의 MTU를 확인한다.
+cmd에서 “netsh interface ipv4 show subinterfaces”로 MTU 확인 = 1500이다. [사진 1]
 
-```bat
-netsh interface ipv4 show subinterfaces
-```
+![사진 1](/uploads/ipv4-fragmentation/mtu.png)
 
-실습에 사용한 Wi-Fi 인터페이스의 MTU는 1500바이트이다.
-
-![Wi-Fi 인터페이스의 MTU가 1500으로 표시된 명령 결과](/uploads/ipv4-fragmentation/mtu.png)
+[사진 1]
 
 ### 2) 패킷 캡처 시작
 
-Wireshark를 실행하고 사용 중인 네트워크 인터페이스를 더블클릭하여 패킷 캡처를 시작한다.
+와이어샤크를 켜고 사용하는 랜카드를 더블클릭하여 패킷 캡처를 시작한다. [사진 2]
 
-![Wireshark에서 Wi-Fi 캡처 인터페이스 선택](/uploads/ipv4-fragmentation/capture-interface.jpeg)
+![사진 2](/uploads/ipv4-fragmentation/capture-interface.jpeg)
+
+[사진 2]
 
 ### 3) 게이트웨이 확인
 
-명령 프롬프트에서 `ipconfig`를 실행하여 인터페이스 주소와 기본 게이트웨이를 확인한다. 실습 환경의 IPv4 주소는 `192.168.0.6`, 기본 게이트웨이는 `192.168.0.1`이다.
+cmd를 실행한 뒤 ipconfig로 랜카드의 게이트웨이를 확인한다. 192.168.0.1 [사진 3]
 
-```bat
-ipconfig
-```
+![사진 3](/uploads/ipv4-fragmentation/ipconfig.png)
 
-![IPv4 주소 192.168.0.6과 기본 게이트웨이 192.168.0.1 확인](/uploads/ipv4-fragmentation/ipconfig.png)
+[사진 3]
 
 ### 4) ping 전송
 
-기본 게이트웨이에 4048바이트의 데이터를 담은 ICMP Echo Request를 한 번 전송한다.
+`ping 192.168.0.1 -l 4048 -n 1`로 게이트웨이에 4048 바이트 핑 1회 전송. [사진 4]
 
-```bat
-ping 192.168.0.1 -l 4048 -n 1
-```
+![사진 4](/uploads/ipv4-fragmentation/ping.jpeg)
 
-`-l`은 데이터 크기, `-n`은 전송 횟수를 지정한다. 전송할 데이터그램이 인터페이스 MTU보다 크므로 여러 IPv4 단편으로 나뉜다.
-
-![4048바이트 ping을 게이트웨이에 한 번 전송한 결과](/uploads/ipv4-fragmentation/ping.jpeg)
+[사진 4]
 
 ### 5) Frame 1 확인
 
-첫 번째 프레임은 IPv4이며, Total Length는 1500바이트로 인터페이스의 MTU와 일치한다. IPv4 헤더가 20바이트이므로 이 단편의 데이터 길이는 1480바이트이다.
+Frame Number : 1로 Frame 1번, Version이 0100으로 IPv4인 것을 확인하였고 Total Length가 1500으로 1)에서 확인한 MTU와 일치한다. Fragment offset이 0으로 첫 번째 단편화 오프셋이며, Flag는 More fragments : Set으로 마지막 단편화 패킷이 아니다. 페이로드는 0~1479 까지. 도착지의 주소가 3)에서 확인한 게이트웨이로 찾던 패킷과 일치하다.
 
-- Identification: `0x1247`
-- Fragment Offset: `0바이트`
-- More Fragments: `Set`
-- 원본 IPv4 데이터에서의 범위: `0~1479`
-- 목적지: `192.168.0.1`
+![사진 5](/uploads/ipv4-fragmentation/frame-1.jpeg)
 
-오프셋이 0이므로 첫 단편이며, MF가 설정되어 있으므로 뒤에 이어지는 단편이 있다.
-
-![첫 단편의 식별자, 전체 길이, MF 플래그와 오프셋](/uploads/ipv4-fragmentation/frame-1.jpeg)
+[사진 5]
 
 ### 6) Frame 2 확인
 
-식별자가 첫 단편과 같은 `0x1247`이며, 발신지·목적지 주소와 프로토콜도 일치한다. Wireshark에 표시되는 Fragment Offset은 1480바이트이다.
+식별자(Identification)가 0x1247로 5)와 일치하여 같은 단편화 패킷이며 Fragment offset이 1480바이트(헤더 값 185)로 두 번째 단편화 오프셋임. Flag는 More fragments : Set으로 마지막 단편화 패킷이 아니다. 페이로드는 1480~2959까지.  [사진 6]
 
-- Total Length: `1500바이트`
-- Fragment Offset: `1480바이트` — 헤더 필드 값은 `185`
-- More Fragments: `Set`
-- 데이터 길이: `1480바이트`
-- 원본 IPv4 데이터에서의 범위: `1480~2959`
+![사진 6](/uploads/ipv4-fragmentation/frame-2.jpeg)
 
-MF가 설정되어 있으므로 마지막 단편은 아니다.
+[사진 6]
 
-![두 번째 단편의 오프셋 1480과 MF 플래그](/uploads/ipv4-fragmentation/frame-2.jpeg)
+### 7) Frame 3 확인
 
-### 7) Frame 3 확인과 재조립
+Identification이 0x1247로 6)과 일치하여 같은 단편화 패킷이며 Fragment offset이 2960바이트(헤더 값 370)로 세 번째 단편화 오프셋이다. Flag값은 More fragments가 Not Set이므로 마지막 단편화 패킷이며 페이로드는 2960~4055까지. 재조립한 크기가 (Reassembled IPv4 length : 4056) 4056으로 표시되는 이유는 4)에서 보낸 데이터에 8바이트의 ICMP 헤더가 붙기 때문이다. [사진 7]
 
-세 번째 단편도 같은 식별자 `0x1247`을 가진다. Fragment Offset은 2960바이트이며, MF는 설정되어 있지 않으므로 마지막 단편이다.
+![사진 7](/uploads/ipv4-fragmentation/frame-3.jpeg)
 
-- Total Length: `1116바이트`
-- Fragment Offset: `2960바이트` — 헤더 필드 값은 `370`
-- More Fragments: `Not Set`
-- 데이터 길이: `1096바이트`
-- 원본 IPv4 데이터에서의 범위: `2960~4055`
+[사진 7]
 
-![세 번째 단편과 Wireshark의 IPv4 재조립 결과](/uploads/ipv4-fragmentation/frame-3.jpeg)
+## 3. 참고문헌
 
-세 단편의 데이터를 합하면 다음과 같다.
+1) 정보통신기술용어해설, 20180528, IPv4 Header IPv4 헤더 http://ktword.co.kr/abbr_view.php?m_temp1=1859
 
-```text
-1480 + 1480 + 1096 = 4056바이트
-4048바이트(ping 데이터) + 8바이트(ICMP 헤더) = 4056바이트
-```
+2) 패킷의 이해, Ethernet 프레임, 20150330, IP 헤더, https://m.blog.naver.com/sujunghan726/220315439853
 
-Wireshark의 `Reassembled IPv4 length: 4056`은 재조립된 IPv4 데이터 부분의 크기이다. 여기에 IPv4 헤더 20바이트를 더하면 원본 IPv4 데이터그램의 전체 길이는 4076바이트가 된다.
+3) 정보통신기술용어해설, 20180528, IP Fragmentation, IP Segmentation IP 단편화, IP 조각화, IPv4 단편화, IPv6 단편화, http://www.ktword.co.kr/abbr_view.php?m_temp1=5236&id=1003
 
-| 프레임 | IPv4 전체 길이 | 단편 데이터 길이 | 오프셋(바이트) | 헤더 오프셋 값(8바이트 단위) | MF |
-| --- | --- | --- | --- | --- | --- |
-| 1 | 1500 | 1480 | 0 | 0 | 1 |
-| 2 | 1500 | 1480 | 1480 | 185 | 1 |
-| 3 | 1116 | 1096 | 2960 | 370 | 0 |
+4) [패킷 분석] IP fragments, 20140412, http://blog.naver.com/shj1126zzang/90193887664
 
-## 참고문헌
-
-- 정보통신기술용어해설(2018.05.28.), [IPv4 Header — IPv4 헤더](http://ktword.co.kr/abbr_view.php?m_temp1=1859).
-- 「패킷의 이해, Ethernet 프레임」(2015.03.30.), [IP 헤더](https://m.blog.naver.com/sujunghan726/220315439853).
-- 정보통신기술용어해설(2018.05.28.), [IP Fragmentation — IP 단편화](http://www.ktword.co.kr/abbr_view.php?m_temp1=5236&id=1003).
-- 「[패킷 분석] IP fragments」(2014.04.12.), [블로그 글](http://blog.naver.com/shj1126zzang/90193887664).
-- 「ping 단편화 과정 [실습]」(2013.01.23.), [실습 글](https://iplab5085.tistory.com/entry/ping-단편화-과정-실습).
-- [RFC 791 — Internet Protocol](https://www.rfc-editor.org/rfc/rfc791).
+5) ping 단편화 과정 [실습], 20130123, https://iplab5085.tistory.com/entry/ping-%EB%8B%A8%ED%8E%B8%ED%99%94-%EA%B3%BC%EC%A0%95-%EC%8B%A4%EC%8A%B5
