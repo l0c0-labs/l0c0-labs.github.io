@@ -1,11 +1,11 @@
 +++
-title = "L0c0 소개"
-description = "Laboratory of Cyber Operations"
+title = "L0C0 소개"
+description = "Independent Cybersecurity Research"
 +++
 
 ## Independent cybersecurity research
 
-**L0c0**는 **Laboratory of Cyber Operations**의 약자로, 기술을 직접 분석하고 실험하는 독립적인 사이버보안 연구 그룹입니다.
+**L0C0**는 기술을 직접 분석하고 실험하는 독립적인 사이버보안 연구 그룹입니다.
 
 시스템이 어떻게 동작하는지, 어떤 조건에서 보안 문제가 발생하는지 탐구합니다. 이곳에는 분석 과정과 발견한 내용, 직접 개발한 도구를 기록합니다.
 
@@ -18,4 +18,4 @@ description = "Laboratory of Cyber Operations"
 
 ## GitHub
 
-코드와 프로젝트는 [L0c0 GitHub](https://github.com/l0c0-labs)에서 확인할 수 있습니다.
+코드와 프로젝트는 [L0C0 GitHub](https://github.com/l0c0-labs)에서 확인할 수 있습니다.

@@ -1,4 +1,4 @@
-# L0c0 — Laboratory of Cyber Operations
+# L0C0 — Laboratory of Cyber Operations
 
 Hugo + Blowfish, hosted on GitHub Pages at https://l0c0.org.
 
