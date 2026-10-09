@@ -1,5 +1,6 @@
 ---
 title: "국내 해킹사례 조사"
+description: "세 가지 국내 침해사고를 통해 계정 관리, 협력업체 보안, 정보 유출과 사고 대응의 중요성을 살펴본다."
 date: 2020-10-28
 categories: [incident-analysis]
 language: ko

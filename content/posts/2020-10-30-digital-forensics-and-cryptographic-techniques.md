@@ -1,5 +1,6 @@
 ---
 title: "디지털 포렌식과 암호화 기법"
+description: "디지털 포렌식에서 사용하는 해시 함수와 무결성 검증을 살펴보고, 국내 수사 사례에서 디지털 포렌식이 어떻게 활용되었는지 정리한다."
 date: 2020-10-30
 categories: [digital-forensics]
 language: ko

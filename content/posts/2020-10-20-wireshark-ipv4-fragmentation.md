@@ -1,5 +1,6 @@
 ---
 title: "와이어샤크를 이용한 단편화 패킷 분석"
+description: "MTU 1500 환경에서 ping으로 IPv4 단편화를 발생시키고, Wireshark에서 식별자·플래그·오프셋과 재조립 결과를 확인한다."
 date: 2020-10-20
 categories: [network-security]
 language: ko

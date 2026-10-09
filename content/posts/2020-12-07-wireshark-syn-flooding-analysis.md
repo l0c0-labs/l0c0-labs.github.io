@@ -1,5 +1,6 @@
 ---
 title: "Flooding 공격 분석 및 정리"
+description: "SYN 요청이 집중된 패킷 덤프를 분석하고 SYN·ACK·RST·FIN·UDP·ICMP·HTTP GET Flooding의 특징을 정리한다."
 date: 2020-12-07
 categories: [network-security]
 language: ko

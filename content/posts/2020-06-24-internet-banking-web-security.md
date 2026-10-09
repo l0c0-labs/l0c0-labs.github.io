@@ -1,5 +1,6 @@
 ---
 title: "금융권 오픈뱅킹의 현황과 문제점"
+description: "은행별 웹뱅킹 호환성을 비교하고 Brute Force, SQL Injection, XSS, CSRF, RFI·LFI의 원인과 대응 방안을 살펴본다."
 date: 2020-06-24
 categories: [web-security]
 language: ko
