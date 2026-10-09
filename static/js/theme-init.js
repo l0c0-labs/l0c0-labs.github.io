@@ -1,0 +1,1 @@
+(()=>{let saved;try{saved=localStorage.getItem('l0c0-theme')}catch{}const mode=saved==='dark'||saved==='light'?saved:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=mode;})();
