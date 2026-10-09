@@ -255,7 +255,7 @@ printf("%s", str);
 
 | 프로세스 | 역할 |
 | --- | --- |
-| Csrss.exe(Client/Server Runtime SubSystem | Win 32) : 윈도우 콘솔 관장. 스레드 생성/삭제. 32비트 가상 MS-DOS 모드 지원 |
+| Csrss.exe(Client/Server Runtime SubSystem : Win 32) | 윈도우 콘솔 관장. 스레드 생성/삭제. 32비트 가상 MS-DOS 모드 지원 |
 | Explorer.exe | 작업 표시줄, 바탕 화면 같은 사용자 셸 지원 |
 | Lsass.exe(Local Security Authentication Server) | Winlogon 서비스에 필요한 인증 |
 | Smss.exe(Session Manager SubSystem) | 사용자 세션 시작 기능, Winlogon, Win32(Csrss.exe)를 구동, 시스템 변수 설정, Smss는 Winlogon이나 Csrss가 끝나기를 기다려 정상적인 Winlogon, Csrss 종료시 시스템 종료 |
