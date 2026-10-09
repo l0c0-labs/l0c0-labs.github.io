@@ -1,6 +1,6 @@
 ---
 title: "국내 보안사고 사례 분석: 현대캐피탈, 한국수력원자력, 농협"
-date: 2026-10-08
+date: 2020-10-28
 description: "세 가지 국내 침해사고를 통해 계정 관리, 협력업체 보안, 정보 유출과 사고 대응의 중요성을 살펴본다."
 categories: [incident-analysis]
 tags: [incident-response, access-control, data-breach, security-governance]

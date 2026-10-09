@@ -50,6 +50,7 @@ content:
         options:
           multiple: true
           values:
+            - {name: network-security, label: Network Security}
             - {name: incident-analysis, label: Incident Analysis}
             - name: research
               label: Research Notes
