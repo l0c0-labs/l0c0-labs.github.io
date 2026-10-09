@@ -12,7 +12,7 @@ We combine collaborative research with hands-on experimentation to deepen our un
 ## Researchers
 
 - Inwoo Na (나인우)
-- 장종일
+- Jong Il Jang (장종일) — [LinkedIn](https://kr.linkedin.com/in/jong-il-jang-29429618b)
 
 ## Code & tools
 
