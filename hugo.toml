@@ -16,3 +16,6 @@ path = "github.com/nunocoracao/blowfish/v3"
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
+
+[markup.highlight]
+  noClasses = false
