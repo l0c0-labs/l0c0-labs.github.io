@@ -9,6 +9,8 @@ Our work includes vulnerability research, hardware and firmware analysis, attack
 
 We combine collaborative research with hands-on experimentation to deepen our understanding of security and share our findings and tools with the community.
 
+Follow L0C0 on [LinkedIn](https://www.linkedin.com/company/l0c0).
+
 ## Researchers
 
 - Inwoo Na (나인우) — [LinkedIn](https://www.linkedin.com/in/iwna/)
