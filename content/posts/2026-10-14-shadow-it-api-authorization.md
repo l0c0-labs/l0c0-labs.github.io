@@ -132,3 +132,7 @@ During an incident, temporary restrictions may be necessary while those defects 
 What I take from this guide is that the API can do exactly what it was programmed to do and still expose information. The missing part may be a permission check, an owner, or a usable audit trail.
 
 AI-assisted tooling makes those gaps easier to explore at scale. The review still starts with the service: who can reach it, what they can request, and what the server actually checks.
+
+## Source
+
+SK shieldus (SK쉴더스), *AI 자동화 공격 시대, Shadow IT를 노린 침해사고 분석 및 대응 가이드*. Subtitle: *ARTEX 기반 금융권 연쇄 침해사고 분석과 API 보안 3단계 대응 방안*. Customer-distribution guide, based on publicly available information as of October 6, 2026.
